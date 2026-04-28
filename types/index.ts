@@ -276,6 +276,14 @@ export type PaletteColor = {
   hex: string;
 };
 
+export type ConfiguratorCategory = {
+  key: string;
+  label: string;
+  icon: string;
+  description: string;
+  active: boolean;
+};
+
 export type BasePriceMatrix = Record<string, Record<string, number>>;
 
 export type ConfiguratorSettings = {
@@ -304,6 +312,8 @@ export type ConfiguratorSettings = {
     polo: number;
     printBothSidesSurcharge: number;
   };
+  categories: ConfiguratorCategory[];
+  customCategoryPrices: Record<string, Record<string, number>>;
 };
 
 export type AdminSession = {

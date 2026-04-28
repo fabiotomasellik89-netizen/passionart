@@ -121,7 +121,7 @@ const REFERENCE_PHOTOS = [
   { src: "/images/products/collezione-mista.jpeg", alt: "Collezione mista" },
 ];
 
-type Category = "bomboniere" | "tazze" | "magliette";
+type Category = string;
 
 // ── Draft types ───────────────────────────────────────────────────────────────
 
@@ -313,33 +313,25 @@ function QuantitySelector({
 
 // ── Category Selector ─────────────────────────────────────────────────────────
 
-function CategorySelector({ onSelect }: { onSelect: (cat: Category) => void }) {
-  const categories = [
-    {
-      key: "bomboniere" as Category,
-      icon: "🎁",
-      label: "Bomboniere",
-      desc: "Bomboniere in legno dipinte a mano, set completi, decorazioni, quadretti e palette artistiche",
-      gradient: "from-rose-50 to-pink-50",
-      border: "hover:border-rose-300",
-    },
-    {
-      key: "tazze" as Category,
-      icon: "☕",
-      label: "Tazze",
-      desc: "Tazze personalizzate con testo, logo o foto — classiche, magiche o con cucchiaino",
-      gradient: "from-amber-50 to-orange-50",
-      border: "hover:border-amber-300",
-    },
-    {
-      key: "magliette" as Category,
-      icon: "👕",
-      label: "Magliette",
-      desc: "T-shirt e polo personalizzate con il tuo logo o design — tutte le taglie e colori",
-      gradient: "from-sky-50 to-blue-50",
-      border: "hover:border-sky-300",
-    },
-  ];
+const CATEGORY_STYLE_MAP: Record<string, { gradient: string; border: string }> = {
+  bomboniere: { gradient: "from-rose-50 to-pink-50", border: "hover:border-rose-300" },
+  tazze: { gradient: "from-amber-50 to-orange-50", border: "hover:border-amber-300" },
+  magliette: { gradient: "from-sky-50 to-blue-50", border: "hover:border-sky-300" },
+};
+
+const DEFAULT_CATEGORY_STYLE = {
+  gradient: "from-violet-50 to-purple-50",
+  border: "hover:border-violet-300",
+};
+
+function CategorySelector({
+  settings,
+  onSelect,
+}: {
+  settings: ConfiguratorSettings;
+  onSelect: (cat: Category) => void;
+}) {
+  const activeCategories = (settings.categories ?? []).filter((c) => c.active);
 
   return (
     <div className="space-y-6">
@@ -352,30 +344,35 @@ function CategorySelector({ onSelect }: { onSelect: (cat: Category) => void }) {
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
-        {categories.map((cat) => (
-          <button
-            key={cat.key}
-            type="button"
-            onClick={() => onSelect(cat.key)}
-            className={cn(
-              "group flex flex-col items-center gap-5 rounded-[2rem] border border-[var(--color-line)] bg-gradient-to-br p-8 text-center transition-all duration-200 hover:shadow-xl",
-              cat.gradient,
-              cat.border,
-            )}
-          >
-            <span className="text-5xl transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6">
-              {cat.icon}
-            </span>
-            <div>
-              <p className="font-display text-2xl text-[var(--color-foreground)]">{cat.label}</p>
-              <p className="mt-2 text-sm leading-relaxed text-[var(--color-muted)]">{cat.desc}</p>
-            </div>
-            <div className="mt-auto flex items-center gap-1.5 text-sm font-semibold text-[var(--color-accent)]">
-              Inizia
-              <ChevronRight className="h-4 w-4" />
-            </div>
-          </button>
-        ))}
+        {activeCategories.map((cat) => {
+          const style = CATEGORY_STYLE_MAP[cat.key] ?? DEFAULT_CATEGORY_STYLE;
+          return (
+            <button
+              key={cat.key}
+              type="button"
+              onClick={() => onSelect(cat.key)}
+              className={cn(
+                "group flex flex-col items-center gap-5 rounded-[2rem] border border-[var(--color-line)] bg-gradient-to-br p-8 text-center transition-all duration-200 hover:shadow-xl",
+                style.gradient,
+                style.border,
+              )}
+            >
+              <span className="text-5xl transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6">
+                {cat.icon}
+              </span>
+              <div>
+                <p className="font-display text-2xl text-[var(--color-foreground)]">{cat.label}</p>
+                <p className="mt-2 text-sm leading-relaxed text-[var(--color-muted)]">
+                  {cat.description}
+                </p>
+              </div>
+              <div className="mt-auto flex items-center gap-1.5 text-sm font-semibold text-[var(--color-accent)]">
+                Inizia
+                <ChevronRight className="h-4 w-4" />
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -2209,6 +2206,180 @@ function MaglietteFlow({
   );
 }
 
+// ── Generic Flow (for custom categories) ─────────────────────────────────────
+
+function GenericFlow({
+  category,
+  settings,
+  onBack,
+}: {
+  category: string;
+  settings: ConfiguratorSettings;
+  onBack: () => void;
+}) {
+  const router = useRouter();
+  const addProductWithOptions = useCartStore((s) => s.addProductWithOptions);
+  const catInfo = (settings.categories ?? []).find((c) => c.key === category);
+  const prices = settings.customCategoryPrices?.[category] ?? {};
+  const priceEntries = Object.entries(prices);
+
+  const [note, setNote] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [selectedPrice, setSelectedPrice] = useState<string | null>(
+    priceEntries[0]?.[0] ?? null,
+  );
+
+  function handleAddToCart() {
+    const unitPrice =
+      selectedPrice && prices[selectedPrice] ? prices[selectedPrice] : 0;
+
+    const product: Product = {
+      id: `${category}-${Date.now()}`,
+      slug: `${category}-personalizzato`,
+      name: `${catInfo?.label ?? category} personalizzato`,
+      shortDescription: note || `Configurato tramite configuratore — categoria ${catInfo?.label ?? category}`,
+      description: "",
+      category: "bomboniere",
+      eventType: "battesimo",
+      basePrice: unitPrice,
+      isFeatured: false,
+      isActive: true,
+      isCustomizable: true,
+      inspirationType: "product",
+      defaultShape: "rettangolo",
+      supportedShapes: ["rettangolo"],
+      materials: ["Personalizzato"],
+      productionNotes: note,
+      leadTimeDays: 14,
+      badge: "Su misura",
+      palette: [],
+      images: [{ id: "preview", url: "/images/logo.jpeg", alt: catInfo?.label ?? category, isCover: true }],
+    };
+
+    addProductWithOptions(product, {
+      customText: note || undefined,
+      quantity,
+    });
+    router.push("/carrello");
+  }
+
+  return (
+    <div className="space-y-8">
+      <div className="space-y-2">
+        <h2 className="font-display text-3xl text-[var(--color-foreground)]">
+          {catInfo?.icon} {catInfo?.label ?? category}
+        </h2>
+        <p className="text-sm text-[var(--color-muted)]">
+          {catInfo?.description ?? "Configura il tuo prodotto personalizzato."}
+        </p>
+      </div>
+
+      {priceEntries.length > 0 && (
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-[var(--color-foreground)]">Variante / Tipologia</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {priceEntries.map(([key, price]) => {
+              const active = selectedPrice === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setSelectedPrice(key)}
+                  className={cn(
+                    "flex items-center justify-between rounded-[1.5rem] border px-5 py-4 text-left transition-all duration-200",
+                    active
+                      ? "border-[var(--color-accent)] bg-[rgba(191,79,123,0.05)] shadow-sm"
+                      : "border-[var(--color-line)] hover:border-[var(--color-accent)]/40",
+                  )}
+                >
+                  <p className={cn("font-semibold", active ? "text-[var(--color-accent)]" : "text-[var(--color-foreground)]")}>
+                    {key}
+                  </p>
+                  <span className="rounded-full bg-[rgba(191,79,123,0.08)] px-2.5 py-1 text-sm font-bold text-[var(--color-accent)]">
+                    {euro(price)}/pz
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-[var(--color-foreground)]">
+          Note o personalizzazione{" "}
+          <span className="text-xs font-normal text-[var(--color-muted)]">(opzionale)</span>
+        </label>
+        <textarea
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          rows={4}
+          maxLength={500}
+          placeholder="Descrivi cosa desideri personalizzare, colori, misure, testo da includere..."
+          className="w-full rounded-2xl border border-[var(--color-line)] bg-white/90 px-4 py-3 text-sm outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[rgba(191,79,123,0.12)]"
+        />
+        <p className="text-xs text-[var(--color-muted)]">{note.length}/500 caratteri</p>
+      </div>
+
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-[var(--color-foreground)]">Quantità</p>
+        <QuantitySelector
+          value={quantity}
+          onChange={setQuantity}
+          presets={[1, 5, 10, 20]}
+          min={1}
+          max={500}
+        />
+      </div>
+
+      {(priceEntries.length > 0 || true) && (
+        <Card className="space-y-3 bg-gradient-to-br from-white to-[rgba(191,79,123,0.04)]">
+          <p className="font-semibold text-[var(--color-foreground)]">Stima del prezzo</p>
+          <div className="space-y-2 text-sm">
+            {selectedPrice && prices[selectedPrice] ? (
+              <>
+                <div className="flex justify-between">
+                  <span className="text-[var(--color-muted)]">Prezzo unitario ({selectedPrice})</span>
+                  <span className="font-medium">{euro(prices[selectedPrice])}/pz</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[var(--color-muted)]">Quantità</span>
+                  <span className="font-medium">× {quantity}</span>
+                </div>
+                <div className="flex items-center justify-between border-t border-[var(--color-line)] pt-2">
+                  <span className="font-bold text-[var(--color-foreground)]">Totale stimato</span>
+                  <span className="text-2xl font-bold text-[var(--color-accent)]">
+                    {euro((prices[selectedPrice] ?? 0) * quantity)}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <p className="text-[var(--color-muted)]">
+                Il preventivo verrà concordato dopo la ricezione dell&apos;ordine.
+              </p>
+            )}
+          </div>
+          <p className="text-xs text-[var(--color-muted)]">* {settings.summaryMessage}</p>
+        </Card>
+      )}
+
+      <Button className="w-full gap-2" size="lg" onClick={handleAddToCart}>
+        <ShoppingBag className="h-4 w-4" />
+        Aggiungi al carrello
+      </Button>
+
+      <p className="text-center text-xs text-[var(--color-muted)]">{settings.productionTimeNote}</p>
+
+      <div className="mt-4">
+        <Button variant="secondary" onClick={onBack}>
+          <ChevronLeft className="mr-1 h-4 w-4" />
+          Categorie
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export default function ConfiguratoreClientPage() {
@@ -2258,7 +2429,7 @@ export default function ConfiguratoreClientPage() {
       )}
 
       {/* Content */}
-      {!category && <CategorySelector onSelect={setCategory} />}
+      {!category && <CategorySelector settings={settings} onSelect={setCategory} />}
       {category === "bomboniere" && (
         <BomboniereFlow settings={settings} onBack={() => setCategory(null)} />
       )}
@@ -2267,6 +2438,9 @@ export default function ConfiguratoreClientPage() {
       )}
       {category === "magliette" && (
         <MaglietteFlow settings={settings} onBack={() => setCategory(null)} />
+      )}
+      {category && !["bomboniere", "tazze", "magliette"].includes(category) && (
+        <GenericFlow category={category} settings={settings} onBack={() => setCategory(null)} />
       )}
     </div>
   );

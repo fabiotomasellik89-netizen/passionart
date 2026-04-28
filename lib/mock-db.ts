@@ -58,6 +58,12 @@ function getState() {
   if (!cs.magliettePrices) {
     cs.magliettePrices = clone(defaultConfiguratorSettings.magliettePrices);
   }
+  if (!cs.categories) {
+    cs.categories = clone(defaultConfiguratorSettings.categories);
+  }
+  if (!cs.customCategoryPrices) {
+    cs.customCategoryPrices = {};
+  }
 
   return globalThis.__passionartMockState__;
 }

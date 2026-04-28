@@ -118,4 +118,31 @@ export const defaultConfiguratorSettings: ConfiguratorSettings = {
     polo: 22.0,
     printBothSidesSurcharge: 5.0,
   },
+  categories: [
+    {
+      key: "bomboniere",
+      label: "Bomboniere",
+      icon: "🎁",
+      description:
+        "Bomboniere in legno dipinte a mano, set completi, decorazioni, quadretti e palette artistiche",
+      active: true,
+    },
+    {
+      key: "tazze",
+      label: "Tazze",
+      icon: "☕",
+      description:
+        "Tazze personalizzate con testo, logo o foto — classiche, magiche o con cucchiaino",
+      active: true,
+    },
+    {
+      key: "magliette",
+      label: "Magliette",
+      icon: "👕",
+      description:
+        "T-shirt e polo personalizzate con il tuo logo o design — tutte le taglie e colori",
+      active: true,
+    },
+  ],
+  customCategoryPrices: {} as Record<string, Record<string, number>>,
 };
