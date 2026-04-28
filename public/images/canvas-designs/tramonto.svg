@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff9a56"/>
+      <stop offset="50%" style="stop-color:#ffcb77"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
+    </linearGradient>
+    <radialGradient id="s" cx="50%" cy="52%" r="20%">
+      <stop offset="0%" style="stop-color:#fff4a0"/>
+      <stop offset="100%" style="stop-color:#ff9a56;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#g)"/>
+  <ellipse cx="200" cy="208" rx="60" ry="60" fill="url(#s)"/>
+  <circle cx="200" cy="208" r="28" fill="#fff4a0"/>
+  <rect y="230" width="400" height="170" fill="#0d3b6e" opacity="0.8"/>
+  <rect x="180" y="230" width="40" height="170" fill="#ffcb77" opacity="0.15"/>
+  <path d="M0 245 Q100 235 200 245 Q300 255 400 245" stroke="white" stroke-width="1" fill="none" opacity="0.3"/>
+  <text x="200" y="340" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#fff4a0" letter-spacing="2">TRAMONTO SUL MARE</text>
+</svg>

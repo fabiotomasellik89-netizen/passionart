@@ -1,0 +1,8 @@
+<svg width="900" height="700" viewBox="0 0 900 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="700" rx="48" fill="#FAEEE8"/>
+  <path d="M450 166L650 322V530H250V322L450 166Z" fill="#E58FAE"/>
+  <rect x="335" y="350" width="230" height="180" rx="28" fill="#FFF8F2"/>
+  <rect x="420" y="420" width="60" height="110" rx="22" fill="#D0A88C"/>
+  <text x="450" y="300" text-anchor="middle" fill="#FFF8F2" font-size="42" font-family="Georgia, serif">Emma</text>
+  <text x="450" y="610" text-anchor="middle" fill="#8D6F64" font-size="42" font-family="Georgia, serif">Battesimo • casetta dolce</text>
+</svg>

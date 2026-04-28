@@ -1,0 +1,6 @@
+<svg width="900" height="700" viewBox="0 0 900 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="700" rx="48" fill="#F7EFE4"/>
+  <ellipse cx="450" cy="360" rx="250" ry="220" fill="#F3D2DB"/>
+  <path d="M450 500C450 500 275 393.108 275 282.5C275 226.458 317.458 184 373.5 184C409.74 184 441.538 202.911 459 230.93C476.462 202.911 508.26 184 544.5 184C600.542 184 643 226.458 643 282.5C643 393.108 468 500 468 500H450Z" fill="#D77197"/>
+  <text x="450" y="612" text-anchor="middle" fill="#6C5357" font-size="42" font-family="Georgia, serif">Nascita • Legno inciso</text>
+</svg>

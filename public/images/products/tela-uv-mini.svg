@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff9a56"/>
+      <stop offset="40%" style="stop-color:#ffcb77"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d3b6e"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="50%" cy="52%" r="12%">
+      <stop offset="0%" style="stop-color:#fff4a0"/>
+      <stop offset="60%" style="stop-color:#ff9a56;stop-opacity:0.8"/>
+      <stop offset="100%" style="stop-color:#ff9a56;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  <!-- Sky -->
+  <rect width="600" height="900" fill="url(#sky)"/>
+  <!-- Sun glow -->
+  <ellipse cx="300" cy="468" rx="80" ry="80" fill="url(#sun)"/>
+  <!-- Sun -->
+  <circle cx="300" cy="468" r="36" fill="#fff4a0" opacity="0.95"/>
+  <!-- Sea -->
+  <rect y="520" width="600" height="380" fill="url(#sea)"/>
+  <!-- Sun reflection -->
+  <rect x="270" y="520" width="60" height="380" fill="#ffcb77" opacity="0.15"/>
+  <!-- Waves -->
+  <path d="M0 540 Q150 530 300 540 Q450 550 600 540" stroke="#ffffff" stroke-width="1.5" fill="none" opacity="0.3"/>
+  <path d="M0 570 Q120 560 240 572 Q370 582 600 570" stroke="#ffffff" stroke-width="1" fill="none" opacity="0.2"/>
+  <path d="M0 600 Q200 590 300 600 Q430 612 600 600" stroke="#ffffff" stroke-width="1" fill="none" opacity="0.15"/>
+  <!-- Horizon boat silhouette -->
+  <ellipse cx="460" cy="524" rx="28" ry="4" fill="#0d3b6e" opacity="0.6"/>
+  <line x1="460" y1="524" x2="460" y2="500" stroke="#0d3b6e" stroke-width="1.5" opacity="0.6"/>
+  <path d="M445 505 Q460 495 475 505" fill="#0d3b6e" opacity="0.5"/>
+  <!-- Text label -->
+  <rect x="0" y="830" width="600" height="70" fill="#0d3b6e" opacity="0.5"/>
+  <text x="300" y="872" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#fff4a0" letter-spacing="3">TRAMONTO SUL MARE</text>
+  <text x="300" y="896" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#ffffff" opacity="0.7" letter-spacing="1">Tela Stampata UV • 20×30 cm</text>
+</svg>

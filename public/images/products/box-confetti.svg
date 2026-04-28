@@ -1,0 +1,9 @@
+<svg width="900" height="700" viewBox="0 0 900 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="700" rx="48" fill="#F2E8DD"/>
+  <rect x="220" y="208" width="460" height="280" rx="36" fill="#FFF9F3" stroke="#B58F7B" stroke-width="8"/>
+  <rect x="410" y="208" width="80" height="280" fill="#C75582"/>
+  <circle cx="308" cy="348" r="26" fill="#E9D0D9"/>
+  <circle cx="365" cy="348" r="26" fill="#F2E9D8"/>
+  <circle cx="592" cy="348" r="26" fill="#D77A9B"/>
+  <text x="450" y="590" text-anchor="middle" fill="#7E6659" font-size="42" font-family="Georgia, serif">Box premium • confetti coordinati</text>
+</svg>

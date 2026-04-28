@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f5e9"/>
+      <stop offset="100%" style="stop-color:#fff3e0"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <!-- Simple family silhouette -->
+  <!-- Father -->
+  <circle cx="145" cy="145" r="28" fill="#5d4037"/>
+  <rect x="120" y="175" width="50" height="80" rx="10" fill="#5d4037"/>
+  <!-- Mother -->
+  <circle cx="215" cy="148" r="25" fill="#795548"/>
+  <path d="M190 175 Q215 215 240 175 L240 255 L190 255 Z" fill="#795548"/>
+  <!-- Child -->
+  <circle cx="300" cy="168" r="18" fill="#a1887f"/>
+  <rect x="285" y="188" width="30" height="55" rx="8" fill="#a1887f"/>
+  <!-- Heart -->
+  <path d="M200 80 C200 70 185 60 175 70 C165 80 170 95 200 115 C230 95 235 80 225 70 C215 60 200 70 200 80 Z" fill="#e91e63" opacity="0.7"/>
+  <text x="200" y="395" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#5d4037" letter-spacing="2">FAMIGLIA FELICE</text>
+</svg>

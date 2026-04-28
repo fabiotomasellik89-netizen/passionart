@@ -1,0 +1,9 @@
+<svg width="900" height="700" viewBox="0 0 900 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="700" rx="48" fill="#F4ECE2"/>
+  <rect x="196" y="170" width="508" height="300" rx="42" fill="#FFF9F2" stroke="#C39B8A" stroke-width="8"/>
+  <circle cx="255" cy="228" r="18" fill="#D36A91"/>
+  <path d="M230 228H280" stroke="#D36A91" stroke-width="6" stroke-linecap="round"/>
+  <text x="450" y="305" text-anchor="middle" fill="#7A665E" font-size="54" font-family="Georgia, serif">Martina &amp; Luca</text>
+  <text x="450" y="370" text-anchor="middle" fill="#A98E82" font-size="30" font-family="Arial, sans-serif">Segnaposto matrimonio elegante</text>
+  <text x="450" y="590" text-anchor="middle" fill="#7A665E" font-size="42" font-family="Georgia, serif">Palette crema • cordino naturale</text>
+</svg>
