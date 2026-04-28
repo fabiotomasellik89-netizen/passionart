@@ -97,11 +97,11 @@ export type ShirtColor = "bianco" | "nero" | "grigio" | "blu-navy" | "rosso";
 export type PrintPosition = "fronte" | "retro" | "entrambi";
 
 export type ProductCustomOptions = {
-  cupVariant?: CupVariant;
-  shirtType?: ShirtType;
-  size?: ShirtSize;
-  color?: ShirtColor;
-  printPosition?: PrintPosition;
+  cupVariant?: string;
+  shirtType?: string;
+  size?: string;
+  color?: string;
+  printPosition?: string;
   logoUrl?: string;
   customText?: string;
   quantity: number;
@@ -284,6 +284,43 @@ export type ConfiguratorCategory = {
   active: boolean;
 };
 
+// ── Per-category configurable types ──────────────────────────────────────────
+
+export type CategoryVariant = {
+  key: string;
+  label: string;
+  desc: string;
+  img: string;
+  price: number;
+  active: boolean;
+};
+
+export type CategoryColor = {
+  key: string;
+  label: string;
+  hex: string;
+  active: boolean;
+};
+
+export type CategoryAddonOption = {
+  key: string;
+  label: string;
+  price: number;
+  active: boolean;
+};
+
+export type CategoryAddonGroup = {
+  key: string;
+  name: string;
+  options: CategoryAddonOption[];
+};
+
+export type CategorySettings = {
+  variants: CategoryVariant[];
+  colors: CategoryColor[];
+  addons: CategoryAddonGroup[];
+};
+
 export type BasePriceMatrix = Record<string, Record<string, number>>;
 
 export type ConfiguratorSettings = {
@@ -314,6 +351,7 @@ export type ConfiguratorSettings = {
   };
   categories: ConfiguratorCategory[];
   customCategoryPrices: Record<string, Record<string, number>>;
+  categorySettings: Record<string, CategorySettings>;
 };
 
 export type AdminSession = {

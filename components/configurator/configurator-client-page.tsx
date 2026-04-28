@@ -150,17 +150,17 @@ type BomboniereDraft = {
 };
 
 type TazzeDraft = {
-  variant?: CupVariant;
+  variant?: string;
   customText: string;
   logoUrl?: string;
   quantity: number;
 };
 
 type MaglietteDraft = {
-  shirtType?: ShirtType;
-  size?: ShirtSize;
-  color?: ShirtColor;
-  printPosition?: PrintPosition;
+  shirtType?: string;
+  size?: string;
+  color?: string;
+  printPosition?: string;
   logoUrl?: string;
   customText: string;
   quantity: number;
@@ -1481,14 +1481,36 @@ function TazzeFlow({
     return false;
   }
 
+  // Derive active cup variants from settings (with fallback to static)
+  const activeCupVariants = (() => {
+    const fromSettings = settings.categorySettings?.tazze?.variants;
+    if (fromSettings && fromSettings.length > 0) {
+      return fromSettings.filter((v) => v.active).map((v) => ({
+        key: v.key,
+        label: v.label || CUP_VARIANTS.find((cv) => cv.key === v.key)?.label || v.key,
+        desc: v.desc || CUP_VARIANTS.find((cv) => cv.key === v.key)?.desc || "",
+        icon: CUP_VARIANTS.find((cv) => cv.key === v.key)?.icon ?? "☕",
+        price: v.price,
+      }));
+    }
+    return CUP_VARIANTS.map((v) => ({
+      key: v.key,
+      label: v.label,
+      desc: v.desc,
+      icon: v.icon,
+      price: settings.tazzePrices[v.key as keyof typeof settings.tazzePrices] ?? 12,
+    }));
+  })();
+
   function getUnitPrice(): number {
     if (!draft.variant) return 0;
-    const prices = settings.tazzePrices;
-    return prices[draft.variant] ?? 12;
+    const v = activeCupVariants.find((cv) => cv.key === draft.variant);
+    if (v) return v.price;
+    return settings.tazzePrices[draft.variant as keyof typeof settings.tazzePrices] ?? 12;
   }
 
   function handleAddToCart() {
-    const variantLabel = CUP_VARIANTS.find((v) => v.key === draft.variant)?.label ?? "Tazza";
+    const variantLabel = activeCupVariants.find((v) => v.key === draft.variant)?.label ?? "Tazza";
     const unitPrice = getUnitPrice();
 
     const product: Product = {
@@ -1551,9 +1573,9 @@ function TazzeFlow({
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-3">
-              {CUP_VARIANTS.map((v) => {
+              {activeCupVariants.map((v) => {
                 const active = draft.variant === v.key;
-                const price = settings.tazzePrices[v.key] ?? 12;
+                const price = v.price;
                 return (
                   <button
                     key={v.key}
@@ -1701,7 +1723,7 @@ function TazzeFlow({
               <div className="grid gap-4 sm:grid-cols-2">
                 <SummaryRow
                   label="Variante"
-                  value={CUP_VARIANTS.find((v) => v.key === draft.variant)?.label ?? ""}
+                  value={activeCupVariants.find((v) => v.key === draft.variant)?.label ?? ""}
                 />
                 {draft.customText && <SummaryRow label="Testo" value={draft.customText} />}
                 <SummaryRow label="Logo" value={draft.logoUrl ? "Immagine allegata" : "Nessun logo"} />
@@ -1793,26 +1815,59 @@ function MaglietteFlow({
     return false;
   }
 
+  // Derive active shirt types from settings (with fallback to static)
+  const activeShirtTypes = (() => {
+    const fromSettings = settings.categorySettings?.magliette?.variants;
+    if (fromSettings && fromSettings.length > 0) {
+      return fromSettings.filter((v) => v.active).map((v) => ({
+        key: v.key,
+        label: v.label || SHIRT_TYPES.find((st) => st.key === v.key)?.label || v.key,
+        desc: v.desc || SHIRT_TYPES.find((st) => st.key === v.key)?.desc || "",
+        icon: SHIRT_TYPES.find((st) => st.key === v.key)?.icon ?? "👕",
+        price: v.price,
+      }));
+    }
+    return SHIRT_TYPES.map((v) => ({
+      key: v.key,
+      label: v.label,
+      desc: v.desc,
+      icon: v.icon,
+      price: settings.magliettePrices[v.key as keyof typeof settings.magliettePrices] ?? 15,
+    }));
+  })();
+
+  // Derive active shirt colors from settings (with fallback to static)
+  const activeShirtColors = (() => {
+    const fromSettings = settings.categorySettings?.magliette?.colors;
+    if (fromSettings && fromSettings.length > 0) {
+      return fromSettings.filter((c) => c.active).map((c) => ({
+        key: c.key,
+        label: c.label,
+        hex: c.hex,
+      }));
+    }
+    return SHIRT_COLORS as Array<{ key: string; label: string; hex: string }>;
+  })();
+
   function getUnitPrice(): number {
     if (!draft.shirtType) return 0;
-    const prices = settings.magliettePrices;
-    let base = prices[draft.shirtType] ?? 15;
+    const v = activeShirtTypes.find((t) => t.key === draft.shirtType);
+    let base = v?.price ?? settings.magliettePrices[draft.shirtType as keyof typeof settings.magliettePrices] ?? 15;
     if (draft.printPosition === "entrambi") {
-      base += prices.printBothSidesSurcharge ?? 5;
+      base += settings.magliettePrices.printBothSidesSurcharge ?? 5;
     }
     return base;
   }
 
   function handleAddToCart() {
-    const typeLabel = SHIRT_TYPES.find((t) => t.key === draft.shirtType)?.label ?? "Maglietta";
+    const typeLabel = activeShirtTypes.find((t) => t.key === draft.shirtType)?.label ?? "Maglietta";
     const unitPrice = getUnitPrice();
-    const totalPrice = unitPrice * draft.quantity;
 
     const product: Product = {
       id: `maglietta-${draft.shirtType}-${Date.now()}`,
       slug: "maglietta-personalizzata",
       name: `${typeLabel} personalizzata`,
-      shortDescription: `Taglia ${draft.size ?? ""} – ${SHIRT_COLORS.find((c) => c.key === draft.color)?.label ?? ""}`,
+      shortDescription: `Taglia ${draft.size ?? ""} – ${activeShirtColors.find((c) => c.key === draft.color)?.label ?? ""}`,
       description: "",
       category: "magliette",
       eventType: "battesimo",
@@ -1869,9 +1924,9 @@ function MaglietteFlow({
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-3">
-              {SHIRT_TYPES.map((t) => {
+              {activeShirtTypes.map((t) => {
                 const active = draft.shirtType === t.key;
-                const price = settings.magliettePrices[t.key] ?? 15;
+                const price = t.price;
                 return (
                   <button
                     key={t.key}
@@ -1956,7 +2011,7 @@ function MaglietteFlow({
                 Colore base <span className="text-[var(--color-accent)]">*</span>
               </p>
               <div className="flex flex-wrap gap-3">
-                {SHIRT_COLORS.map((c) => {
+                {activeShirtColors.map((c) => {
                   const active = draft.color === c.key;
                   return (
                     <button
@@ -1986,7 +2041,7 @@ function MaglietteFlow({
               </div>
               {draft.color && (
                 <p className="text-xs text-[var(--color-muted)]">
-                  Selezionato: {SHIRT_COLORS.find((c) => c.key === draft.color)?.label}
+                  Selezionato: {activeShirtColors.find((c) => c.key === draft.color)?.label}
                 </p>
               )}
             </div>
@@ -2134,12 +2189,12 @@ function MaglietteFlow({
               <div className="grid gap-4 sm:grid-cols-2">
                 <SummaryRow
                   label="Tipo"
-                  value={SHIRT_TYPES.find((t) => t.key === draft.shirtType)?.label ?? ""}
+                  value={activeShirtTypes.find((t) => t.key === draft.shirtType)?.label ?? ""}
                 />
                 <SummaryRow label="Taglia" value={draft.size ?? ""} />
                 <SummaryRow
                   label="Colore"
-                  value={SHIRT_COLORS.find((c) => c.key === draft.color)?.label ?? ""}
+                  value={activeShirtColors.find((c) => c.key === draft.color)?.label ?? ""}
                 />
                 <SummaryRow
                   label="Posizione stampa"

@@ -64,6 +64,9 @@ function getState() {
   if (!cs.customCategoryPrices) {
     cs.customCategoryPrices = {};
   }
+  if (!cs.categorySettings) {
+    cs.categorySettings = clone(defaultConfiguratorSettings.categorySettings);
+  }
 
   return globalThis.__passionartMockState__;
 }
