@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "node scripts/seed-supabase.js",
+    "setup-db": "node scripts/setup-supabase.js"
   },
   "dependencies": {
     "@paypal/paypal-js": "^9.7.0",
