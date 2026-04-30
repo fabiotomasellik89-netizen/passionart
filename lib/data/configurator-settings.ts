@@ -143,6 +143,14 @@ export const defaultConfiguratorSettings: ConfiguratorSettings = {
         "T-shirt e polo personalizzate con il tuo logo o design — tutte le taglie e colori",
       active: true,
     },
+    {
+      key: "medagliette",
+      label: "Medagliette",
+      icon: "🏅",
+      description:
+        "Medagliette in legno 5×5cm con la tua foto stampata — ricordo unico per ogni occasione",
+      active: true,
+    },
   ],
   customCategoryPrices: {} as Record<string, Record<string, number>>,
   categorySettings: {
@@ -189,6 +197,43 @@ export const defaultConfiguratorSettings: ConfiguratorSettings = {
           key: "stampa-fronte-retro",
           name: "Stampa Fronte+Retro",
           options: [{ key: "fronte-retro", label: "Stampa su entrambi i lati (+€5/pz)", price: 5.0, active: true }],
+        },
+      ],
+    } satisfies CategorySettings,
+    medagliette: {
+      variants: [
+        { key: "legno-naturale", label: "Legno Naturale", desc: "Finitura legno naturale con foto stampata", img: "/images/products/medaglietta-legno.svg", price: 8.0, active: true },
+        { key: "legno-colorato", label: "Legno Colorato", desc: "Bordo colorato a scelta con foto stampata", img: "/images/products/medaglietta-colorata.svg", price: 10.0, active: true },
+      ],
+      colors: [
+        { key: "naturale", label: "Naturale", hex: "#d4a574", active: true },
+        { key: "rosa", label: "Rosa", hex: "#f8bbd9", active: true },
+        { key: "azzurro", label: "Azzurro", hex: "#b3e5fc", active: true },
+        { key: "oro", label: "Oro", hex: "#ffd700", active: true },
+        { key: "argento", label: "Argento", hex: "#c0c0c0", active: true },
+      ],
+      addons: [
+        {
+          key: "cordino",
+          name: "Cordino / Nastrino",
+          options: [
+            { key: "cotone", label: "Cordino cotone", price: 1.0, active: true },
+            { key: "raso", label: "Nastrino raso", price: 1.5, active: true },
+            { key: "organza", label: "Nastrino organza", price: 2.0, active: true },
+          ],
+        },
+        {
+          key: "bustina",
+          name: "Bustina Trasparente",
+          options: [{ key: "standard", label: "Bustina trasparente", price: 0.5, active: true }],
+        },
+        {
+          key: "confetti",
+          name: "Confetti",
+          options: [
+            { key: "mandorla", label: "Confetti mandorla (5pz)", price: 2.0, active: true },
+            { key: "cioccolato", label: "Confetti cioccolato (5pz)", price: 2.5, active: true },
+          ],
         },
       ],
     } satisfies CategorySettings,

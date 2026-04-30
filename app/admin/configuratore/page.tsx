@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import * as React from "react";
 import { Plus, Save, Settings, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -56,6 +57,12 @@ function PriceInput({
   value: number;
   onChange: (v: number) => void;
 }) {
+  const [localValue, setLocalValue] = React.useState(String(value));
+
+  React.useEffect(() => {
+    setLocalValue(String(value));
+  }, [value]);
+
   return (
     <div className="flex items-center gap-1">
       <span className="text-[var(--color-muted)]">€</span>
@@ -63,8 +70,9 @@ function PriceInput({
         type="number"
         min="0"
         step="0.5"
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
+        value={localValue}
+        onChange={(e) => setLocalValue(e.target.value)}
+        onBlur={(e) => onChange(Number(e.target.value))}
         className="w-20 rounded-xl border border-[var(--color-line)] bg-white/90 px-2 py-1.5 text-center text-sm outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[rgba(191,79,123,0.12)]"
       />
     </div>
