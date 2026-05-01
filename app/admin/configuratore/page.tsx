@@ -536,6 +536,24 @@ function TabCategorie({
                 onChange={(e) => update(i, "description", e.target.value)}
                 placeholder="Breve descrizione per i clienti"
               />
+              <div className="sm:col-span-2">
+                <Input
+                  label="URL Immagine (opzionale)"
+                  value={cat.image || ""}
+                  onChange={(e) => update(i, "image", e.target.value)}
+                  placeholder="https://... o /images/..."
+                />
+                {cat.image && (
+                  <div className="mt-2">
+                    <img
+                      src={cat.image}
+                      alt={cat.label}
+                      className="h-24 w-24 rounded-xl object-cover border border-[var(--color-line)]"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </Card>
         );

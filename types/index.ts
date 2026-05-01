@@ -282,6 +282,7 @@ export type ConfiguratorCategory = {
   icon: string;
   description: string;
   active: boolean;
+  image?: string;
 };
 
 // ── Per-category configurable types ──────────────────────────────────────────

@@ -357,7 +357,19 @@ function CategorySelector({
                 style.border,
               )}
             >
-              <span className="text-5xl transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6">
+              {cat.image ? (
+                <img
+                  src={cat.image}
+                  alt={cat.label}
+                  className="h-20 w-20 rounded-2xl object-cover border-2 border-white/50 shadow-sm transition-transform duration-200 group-hover:scale-110"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = "none";
+                    const sibling = (e.target as HTMLImageElement).nextElementSibling;
+                    if (sibling) sibling.classList.remove("hidden");
+                  }}
+                />
+              ) : null}
+              <span className={cn("text-5xl transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6", cat.image && "hidden")}>
                 {cat.icon}
               </span>
               <div>
