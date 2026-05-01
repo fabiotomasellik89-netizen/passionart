@@ -80,13 +80,13 @@ const PALETTE_SIZES: Array<{ key: PaletteSizeKey; label: string; desc: string; p
   { key: "personalizzata", label: "Personalizzata", desc: "Min 25 cm per lato", price: "da €35" },
 ];
 
-const CUP_VARIANTS: Array<{ key: CupVariant; label: string; desc: string; icon: string }> = [
+const CUP_VARIANTS: Array<{ key: CupVariant; label: string; desc: string; icon: string; img?: string }> = [
   { key: "classica", label: "Tazza Classica", desc: "Ceramica bianca, stampa permanente", icon: "☕" },
   { key: "magica", label: "Tazza Magica", desc: "Il disegno appare con il calore!", icon: "✨" },
   { key: "con-cucchiaio", label: "Con Cucchiaino", desc: "Tazza + cucchiaino coordinato incluso", icon: "🥄" },
 ];
 
-const SHIRT_TYPES: Array<{ key: ShirtType; label: string; desc: string; icon: string }> = [
+const SHIRT_TYPES: Array<{ key: ShirtType; label: string; desc: string; icon: string; img?: string }> = [
   { key: "tshirt-manica-corta", label: "T-Shirt Manica Corta", desc: "100% cotone, taglio classico", icon: "👕" },
   { key: "tshirt-manica-lunga", label: "T-Shirt Manica Lunga", desc: "100% cotone, manica lunga", icon: "🧥" },
   { key: "polo", label: "Polo", desc: "Con colletto e bottoni, look elegante", icon: "🎽" },
@@ -1502,6 +1502,7 @@ function TazzeFlow({
         label: v.label || CUP_VARIANTS.find((cv) => cv.key === v.key)?.label || v.key,
         desc: v.desc || CUP_VARIANTS.find((cv) => cv.key === v.key)?.desc || "",
         icon: CUP_VARIANTS.find((cv) => cv.key === v.key)?.icon ?? "☕",
+        img: v.img || CUP_VARIANTS.find((cv) => cv.key === v.key)?.img || "",
         price: v.price,
       }));
     }
@@ -1510,6 +1511,7 @@ function TazzeFlow({
       label: v.label,
       desc: v.desc,
       icon: v.icon,
+      img: v.img || "",
       price: settings.tazzePrices[v.key as keyof typeof settings.tazzePrices] ?? 12,
     }));
   })();
@@ -1600,7 +1602,16 @@ function TazzeFlow({
                         : "border-[var(--color-line)] hover:border-[var(--color-accent)]/50",
                     )}
                   >
-                    <span className="text-4xl">{v.icon}</span>
+                    {v.img ? (
+                      <img
+                        src={v.img}
+                        alt={v.label}
+                        className="h-20 w-20 rounded-2xl object-cover border-2 border-white/50"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                      />
+                    ) : (
+                      <span className="text-4xl">{v.icon}</span>
+                    )}
                     <div>
                       <p
                         className={cn(
@@ -1836,6 +1847,7 @@ function MaglietteFlow({
         label: v.label || SHIRT_TYPES.find((st) => st.key === v.key)?.label || v.key,
         desc: v.desc || SHIRT_TYPES.find((st) => st.key === v.key)?.desc || "",
         icon: SHIRT_TYPES.find((st) => st.key === v.key)?.icon ?? "👕",
+        img: v.img || SHIRT_TYPES.find((st) => st.key === v.key)?.img || "",
         price: v.price,
       }));
     }
@@ -1844,6 +1856,7 @@ function MaglietteFlow({
       label: v.label,
       desc: v.desc,
       icon: v.icon,
+      img: v.img || "",
       price: settings.magliettePrices[v.key as keyof typeof settings.magliettePrices] ?? 15,
     }));
   })();
@@ -1951,7 +1964,16 @@ function MaglietteFlow({
                         : "border-[var(--color-line)] hover:border-[var(--color-accent)]/50",
                     )}
                   >
-                    <span className="text-4xl">{t.icon}</span>
+                    {t.img ? (
+                      <img
+                        src={t.img}
+                        alt={t.label}
+                        className="h-20 w-20 rounded-2xl object-cover border-2 border-white/50"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                      />
+                    ) : (
+                      <span className="text-4xl">{t.icon}</span>
+                    )}
                     <div>
                       <p
                         className={cn(
