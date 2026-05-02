@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import * as React from "react";
 import { Plus, Save, Settings, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -902,78 +902,71 @@ function TabFormatiPrezzi({
   settings: ConfiguratorSettings;
   onChange: (partial: Partial<ConfiguratorSettings>) => void;
 }) {
-  // Stato locale per evitare re-render del padre ad ogni modifica
-  const [localBasePrices, setLocalBasePrices] = useState(settings.basePrices);
-  const [localTazzePrices, setLocalTazzePrices] = useState(settings.tazzePrices);
-  const [localMagliettePrices, setLocalMagliettePrices] = useState(settings.magliettePrices);
-  const [localCustomPrices, setLocalCustomPrices] = useState(settings.customCategoryPrices ?? {});
+  // Usa useRef per evitare re-render quando si modificano i prezzi
+  const basePricesRef = useRef(settings.basePrices);
+  const tazzePricesRef = useRef(settings.tazzePrices);
+  const magliettePricesRef = useRef(settings.magliettePrices);
+  const customPricesRef = useRef(settings.customCategoryPrices ?? {});
 
-  // Sincronizza con props solo quando cambia settings (mount)
+  // Aggiorna i ref solo quando cambia settings (prima volta)
   useEffect(() => {
-    setLocalBasePrices(settings.basePrices);
-    setLocalTazzePrices(settings.tazzePrices);
-    setLocalMagliettePrices(settings.magliettePrices);
-    setLocalCustomPrices(settings.customCategoryPrices ?? {});
+    basePricesRef.current = settings.basePrices;
+    tazzePricesRef.current = settings.tazzePrices;
+    magliettePricesRef.current = settings.magliettePrices;
+    customPricesRef.current = settings.customCategoryPrices ?? {};
   }, []);
 
   function updateBasePrice(format: string, size: string, value: number) {
-    const updated = {
-      ...localBasePrices,
-      [format]: { ...(localBasePrices[format] ?? {}), [size]: value },
+    basePricesRef.current = {
+      ...basePricesRef.current,
+      [format]: { ...(basePricesRef.current[format] ?? {}), [size]: value },
     };
-    setLocalBasePrices(updated);
-    onChange({ basePrices: updated });
+    onChange({ basePrices: basePricesRef.current });
   }
 
   function patchTazze(field: keyof ConfiguratorSettings["tazzePrices"], value: number) {
-    const updated = { ...localTazzePrices, [field]: value };
-    setLocalTazzePrices(updated);
-    onChange({ tazzePrices: updated });
+    tazzePricesRef.current = { ...tazzePricesRef.current, [field]: value };
+    onChange({ tazzePrices: tazzePricesRef.current });
   }
 
   function patchMagliette(field: keyof ConfiguratorSettings["magliettePrices"], value: number) {
-    const updated = { ...localMagliettePrices, [field]: value };
-    setLocalMagliettePrices(updated);
-    onChange({ magliettePrices: updated });
+    magliettePricesRef.current = { ...magliettePricesRef.current, [field]: value };
+    onChange({ magliettePrices: magliettePricesRef.current });
   }
 
   function updateCustomPrice(catKey: string, priceKey: string, value: number) {
-    const existing = localCustomPrices[catKey] ?? {};
-    const updated = {
-      ...localCustomPrices,
+    const existing = customPricesRef.current[catKey] ?? {};
+    customPricesRef.current = {
+      ...customPricesRef.current,
       [catKey]: { ...existing, [priceKey]: value },
     };
-    setLocalCustomPrices(updated);
-    onChange({ customCategoryPrices: updated });
+    onChange({ customCategoryPrices: customPricesRef.current });
   }
 
   function addCustomPriceRow(catKey: string) {
-    const existing = localCustomPrices[catKey] ?? {};
+    const existing = customPricesRef.current[catKey] ?? {};
     const newKey = `voce-${Date.now()}`;
-    const updated = {
-      ...localCustomPrices,
+    customPricesRef.current = {
+      ...customPricesRef.current,
       [catKey]: { ...existing, [newKey]: 0 },
     };
-    setLocalCustomPrices(updated);
-    onChange({ customCategoryPrices: updated });
+    onChange({ customCategoryPrices: customPricesRef.current });
   }
 
   function removeCustomPriceRow(catKey: string, priceKey: string) {
-    const existing = { ...(localCustomPrices[catKey] ?? {}) };
+    const existing = { ...(customPricesRef.current[catKey] ?? {}) };
     delete existing[priceKey];
-    const updated = { ...localCustomPrices, [catKey]: existing };
-    setLocalCustomPrices(updated);
-    onChange({ customCategoryPrices: updated });
+    customPricesRef.current = { ...customPricesRef.current, [catKey]: existing };
+    onChange({ customCategoryPrices: customPricesRef.current });
   }
 
   function renameCustomPriceKey(catKey: string, oldKey: string, newKey: string) {
-    const existing = { ...(localCustomPrices[catKey] ?? {}) };
+    const existing = { ...(customPricesRef.current[catKey] ?? {}) };
     const val = existing[oldKey] ?? 0;
     delete existing[oldKey];
     existing[newKey] = val;
-    const updated = { ...localCustomPrices, [catKey]: existing };
-    setLocalCustomPrices(updated);
-    onChange({ customCategoryPrices: updated });
+    customPricesRef.current = { ...customPricesRef.current, [catKey]: existing };
+    onChange({ customCategoryPrices: customPricesRef.current });
   }
 
   const customCategories = (settings.categories ?? []).filter(
@@ -1012,7 +1005,7 @@ function TabFormatiPrezzi({
                   {BOMBONIERE_SIZE_KEYS.map((size) => (
                     <td key={size} className="py-3 pr-4">
                       <PriceInput
-                        value={localBasePrices[key]?.[size] ?? 0}
+                        value={basePricesRef.current[key]?.[size] ?? 0}
                         onChange={(v) => updateBasePrice(key, size, v)}
                       />
                     </td>
@@ -1050,7 +1043,7 @@ function TabFormatiPrezzi({
                   </td>
                   <td className="py-3">
                     <PriceInput
-                      value={localBasePrices["palette"]?.[size] ?? 0}
+                      value={basePricesRef.current["palette"]?.[size] ?? 0}
                       onChange={(v) => updateBasePrice("palette", size, v)}
                     />
                   </td>
@@ -1090,7 +1083,7 @@ function TabFormatiPrezzi({
                 </td>
                 <td className="py-3">
                   <PriceInput
-                    value={localTazzePrices.classica}
+                    value={tazzePricesRef.current.classica}
                     onChange={(v) => patchTazze("classica", v)}
                   />
                 </td>
@@ -1101,7 +1094,7 @@ function TabFormatiPrezzi({
                 </td>
                 <td className="py-3">
                   <PriceInput
-                    value={localTazzePrices.magica}
+                    value={tazzePricesRef.current.magica}
                     onChange={(v) => patchTazze("magica", v)}
                   />
                 </td>
@@ -1112,7 +1105,7 @@ function TabFormatiPrezzi({
                 </td>
                 <td className="py-3">
                   <PriceInput
-                    value={localTazzePrices["con-cucchiaio"]}
+                    value={tazzePricesRef.current["con-cucchiaio"]}
                     onChange={(v) => patchTazze("con-cucchiaio", v)}
                   />
                 </td>
@@ -1147,7 +1140,7 @@ function TabFormatiPrezzi({
                 </td>
                 <td className="py-3">
                   <PriceInput
-                    value={localMagliettePrices["tshirt-manica-corta"]}
+                    value={magliettePricesRef.current["tshirt-manica-corta"]}
                     onChange={(v) => patchMagliette("tshirt-manica-corta", v)}
                   />
                 </td>
@@ -1158,7 +1151,7 @@ function TabFormatiPrezzi({
                 </td>
                 <td className="py-3">
                   <PriceInput
-                    value={localMagliettePrices["tshirt-manica-lunga"]}
+                    value={magliettePricesRef.current["tshirt-manica-lunga"]}
                     onChange={(v) => patchMagliette("tshirt-manica-lunga", v)}
                   />
                 </td>
@@ -1167,7 +1160,7 @@ function TabFormatiPrezzi({
                 <td className="py-3 pr-6 font-medium text-[var(--color-foreground)]">Polo</td>
                 <td className="py-3">
                   <PriceInput
-                    value={localMagliettePrices.polo}
+                    value={magliettePricesRef.current.polo}
                     onChange={(v) => patchMagliette("polo", v)}
                   />
                 </td>
@@ -1178,7 +1171,7 @@ function TabFormatiPrezzi({
                 </td>
                 <td className="py-3">
                   <PriceInput
-                    value={localMagliettePrices.printBothSidesSurcharge}
+                    value={magliettePricesRef.current.printBothSidesSurcharge}
                     onChange={(v) => patchMagliette("printBothSidesSurcharge", v)}
                   />
                 </td>
@@ -1190,7 +1183,7 @@ function TabFormatiPrezzi({
 
       {/* ── Categorie personalizzate ── */}
       {customCategories.map((cat) => {
-        const prices = localCustomPrices[cat.key] ?? {};
+        const prices = customPricesRef.current[cat.key] ?? {};
         const entries = Object.entries(prices);
         return (
           <div key={cat.key} className="space-y-4">
@@ -1541,24 +1534,22 @@ function TabImpostazioni({
   settings: ConfiguratorSettings;
   onChange: (partial: Partial<ConfiguratorSettings>) => void;
 }) {
-  const [localTazzePrices, setLocalTazzePrices] = useState(settings.tazzePrices);
-  const [localMagliettePrices, setLocalMagliettePrices] = useState(settings.magliettePrices);
+  const tazzePricesRef = useRef(settings.tazzePrices);
+  const magliettePricesRef = useRef(settings.magliettePrices);
 
   useEffect(() => {
-    setLocalTazzePrices(settings.tazzePrices);
-    setLocalMagliettePrices(settings.magliettePrices);
+    tazzePricesRef.current = settings.tazzePrices;
+    magliettePricesRef.current = settings.magliettePrices;
   }, []);
 
   function patchTazze(field: keyof ConfiguratorSettings["tazzePrices"], value: number) {
-    const updated = { ...localTazzePrices, [field]: value };
-    setLocalTazzePrices(updated);
-    onChange({ tazzePrices: updated });
+    tazzePricesRef.current = { ...tazzePricesRef.current, [field]: value };
+    onChange({ tazzePrices: tazzePricesRef.current });
   }
 
   function patchMagliette(field: keyof ConfiguratorSettings["magliettePrices"], value: number) {
-    const updated = { ...localMagliettePrices, [field]: value };
-    setLocalMagliettePrices(updated);
-    onChange({ magliettePrices: updated });
+    magliettePricesRef.current = { ...magliettePricesRef.current, [field]: value };
+    onChange({ magliettePrices: magliettePricesRef.current });
   }
 
   return (
@@ -1619,7 +1610,7 @@ function TabImpostazioni({
             type="number"
             min="0"
             step="0.5"
-            value={localTazzePrices.classica}
+            value={tazzePricesRef.current.classica}
             onChange={(e) => patchTazze("classica", Number(e.target.value))}
           />
           <Input
@@ -1627,7 +1618,7 @@ function TabImpostazioni({
             type="number"
             min="0"
             step="0.5"
-            value={localTazzePrices.magica}
+            value={tazzePricesRef.current.magica}
             onChange={(e) => patchTazze("magica", Number(e.target.value))}
           />
           <Input
@@ -1635,7 +1626,7 @@ function TabImpostazioni({
             type="number"
             min="0"
             step="0.5"
-            value={localTazzePrices["con-cucchiaio"]}
+            value={tazzePricesRef.current["con-cucchiaio"]}
             onChange={(e) => patchTazze("con-cucchiaio", Number(e.target.value))}
           />
         </div>
@@ -1650,7 +1641,7 @@ function TabImpostazioni({
             type="number"
             min="0"
             step="0.5"
-            value={localMagliettePrices["tshirt-manica-corta"]}
+            value={magliettePricesRef.current["tshirt-manica-corta"]}
             onChange={(e) => patchMagliette("tshirt-manica-corta", Number(e.target.value))}
           />
           <Input
@@ -1658,7 +1649,7 @@ function TabImpostazioni({
             type="number"
             min="0"
             step="0.5"
-            value={localMagliettePrices["tshirt-manica-lunga"]}
+            value={magliettePricesRef.current["tshirt-manica-lunga"]}
             onChange={(e) => patchMagliette("tshirt-manica-lunga", Number(e.target.value))}
           />
           <Input
@@ -1666,7 +1657,7 @@ function TabImpostazioni({
             type="number"
             min="0"
             step="0.5"
-            value={localMagliettePrices.polo}
+            value={magliettePricesRef.current.polo}
             onChange={(e) => patchMagliette("polo", Number(e.target.value))}
           />
           <Input
@@ -1674,7 +1665,7 @@ function TabImpostazioni({
             type="number"
             min="0"
             step="0.5"
-            value={localMagliettePrices.printBothSidesSurcharge}
+            value={magliettePricesRef.current.printBothSidesSurcharge}
             onChange={(e) => patchMagliette("printBothSidesSurcharge", Number(e.target.value))}
           />
         </div>
