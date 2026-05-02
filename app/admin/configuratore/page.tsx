@@ -1670,7 +1670,13 @@ export default function AdminConfiguratoreSettingsPage() {
   useEffect(() => {
     fetch("/api/admin/configuratore")
       .then((r) => r.json())
-      .then((json: { settings: ConfiguratorSettings }) => setSettings(json.settings))
+      .then((json: { settings: ConfiguratorSettings }) => {
+        setSettings((prev) => {
+          // Se l'utente ha già modificato, non sovrascrivere
+          if (prev) return prev;
+          return json.settings;
+        });
+      })
       .catch(() => undefined);
   }, []);
 
