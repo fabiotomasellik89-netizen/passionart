@@ -1,16 +1,9 @@
 const { createClient } = require('@supabase/supabase-js');
 
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env.local') });
+const SUPABASE_URL = "https://zdzjgugxmbseyhapeqms.supabase.co";
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-  console.error('❌ Variabili ambiente mancanti!');
-  process.exit(1);
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey, {
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false }
 });
 
