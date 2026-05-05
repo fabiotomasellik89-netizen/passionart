@@ -7,6 +7,7 @@ import { ShoppingCart, Upload, ImageIcon, Type, Check, ArrowLeft } from "lucide-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useCartStore } from "@/store/cart-store";
+import { useConfiguratorStore } from "@/store/configurator-store";
 import { euro } from "@/lib/utils";
 import {
   CANVAS_SIZES,
@@ -148,6 +149,7 @@ export function CanvasConfigurator({ product }: { product: Product }) {
       configuration: fallbackConfig,
       canvasConfig,
     });
+    useConfiguratorStore.getState().clearDrafts();
 
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);

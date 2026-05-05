@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
+import { useConfiguratorStore } from "@/store/configurator-store";
 import { calculateArtisticPricing } from "@/lib/configurator/artistic-pricing";
 import { defaultConfiguratorSettings } from "@/lib/data/configurator-settings";
 import { Button } from "@/components/ui/button";
@@ -1379,6 +1380,7 @@ function BomboniereFlow({
     };
 
     addItem({ product, quantity: config.quantity, unitPrice, totalPrice, breakdown, configuration: config });
+    useConfiguratorStore.getState().clearDrafts();
     router.push("/carrello");
   }
 
