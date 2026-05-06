@@ -2312,14 +2312,14 @@ export default function ConfiguratoreClientPage() {
       .then((r) => r.json())
       .then((data: ConfiguratorSettings) => {
         // Merge intelligente: non sovrascrivere array vuoti (usa default)
-        const merged = { ...defaultConfiguratorSettings };
+        const merged: ConfiguratorSettings = { ...defaultConfiguratorSettings };
         for (const key in data) {
           const value = data[key as keyof ConfiguratorSettings];
           if (value !== undefined && value !== null) {
             if (Array.isArray(value) && value.length === 0) {
               continue; // Mantieni default se array vuoto
             }
-            merged[key as keyof ConfiguratorSettings] = value;
+            (merged as Record<string, unknown>)[key] = value;
           }
         }
         setSettings(merged);
