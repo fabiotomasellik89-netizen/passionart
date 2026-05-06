@@ -2310,12 +2310,20 @@ export default function ConfiguratoreClientPage() {
   useEffect(() => {
     fetch("/api/configuratore/settings")
       .then((r) => r.json())
-      .then((data: ConfiguratorSettings) =>
-        // Merge with defaults so that any newly-added fields (e.g. tazzePrices,
-        // magliettePrices) are always present even if the cached server state
-        // pre-dates the schema extension.
-        setSettings({ ...defaultConfiguratorSettings, ...data }),
-      )
+      .then((data: ConfiguratorSettings) => {
+        // Merge intelligente: non sovrascrivere array vuoti (usa default)
+        const merged = { ...defaultConfiguratorSettings };
+        for (const key in data) {
+          const value = data[key as keyof ConfiguratorSettings];
+          if (value !== undefined && value !== null) {
+            if (Array.isArray(value) && value.length === 0) {
+              continue; // Mantieni default se array vuoto
+            }
+            merged[key as keyof ConfiguratorSettings] = value;
+          }
+        }
+        setSettings(merged);
+      })
       .catch(() => undefined);
   }, []);
 
