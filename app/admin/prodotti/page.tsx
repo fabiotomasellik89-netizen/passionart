@@ -19,6 +19,7 @@ const CATEGORY_OPTIONS: { value: ProductCategory; label: string }[] = [
   { value: "collezione", label: "Collezione" },
   { value: "tazze", label: "Tazze personalizzate" },
   { value: "magliette", label: "Magliette e polo" },
+  { value: "tele-stampate", label: "Calamite"},
   { value: "tele-stampate", label: "Tele stampate UV" },
 ];
 
